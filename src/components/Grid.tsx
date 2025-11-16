@@ -4,22 +4,30 @@ import Square from "./Square";
 const Grid = ({
   onClick,
   turnCount,
-  onGameEnd
+  grid,
+  onGameEnd,
+  gameId,
 }: {
   onClick: () => void;
   turnCount: number;
+  grid: number[][];
   onGameEnd: (player: number) => void;
+  gameId: number;
 }) => {
   const NEGATIVE_ONE = -1;
   const PLAYERONE = 1;
   const PLAYERTWO = 2;
   const DIMENSION = 3;
 
-  const [squareGrid, setSquareGrid] = useState([
-    [NEGATIVE_ONE, NEGATIVE_ONE, NEGATIVE_ONE],
-    [NEGATIVE_ONE, NEGATIVE_ONE, NEGATIVE_ONE],
-    [NEGATIVE_ONE, NEGATIVE_ONE, NEGATIVE_ONE],
-  ]);
+  const [squareGrid, setSquareGrid] = useState(grid);
+
+  useEffect(() => {
+    setSquareGrid([
+      [-1, -1, -1],
+      [-1, -1, -1],
+      [-1, -1, -1],
+    ]);
+  }, [gameId]);
 
   const handleClick = (i: number) => {
     var turn = turnCount % 2 == 0 ? 0 : 1;
@@ -83,22 +91,22 @@ const Grid = ({
   useEffect(() => {
     var result = detectGameEnd(squareGrid);
     if (result === 1 || result === 2) {
-        console.log("Player " + result + " won!");
-        if (onGameEnd) onGameEnd(result);
+      console.log("Player " + result + " won!");
+      if (onGameEnd) onGameEnd(result);
     }
   }, [squareGrid]);
 
   return (
     <div className="grid grid-rows-3 grid-cols-3 gap-x-1 gap-y-0 w-max">
-      <Square onClick={handleClick} turnCount={turnCount} index={0}></Square>
-      <Square onClick={handleClick} turnCount={turnCount} index={1}></Square>
-      <Square onClick={handleClick} turnCount={turnCount} index={2}></Square>
-      <Square onClick={handleClick} turnCount={turnCount} index={3}></Square>
-      <Square onClick={handleClick} turnCount={turnCount} index={4}></Square>
-      <Square onClick={handleClick} turnCount={turnCount} index={5}></Square>
-      <Square onClick={handleClick} turnCount={turnCount} index={6}></Square>
-      <Square onClick={handleClick} turnCount={turnCount} index={7}></Square>
-      <Square onClick={handleClick} turnCount={turnCount} index={8}></Square>
+      {Array.from({ length: 9 }).map((_, i) => (
+        <Square
+          key={i}
+          onClick={handleClick}
+          turnCount={turnCount}
+          index={i}
+          gameId={gameId}
+        ></Square>
+      ))}
     </div>
   );
 };
